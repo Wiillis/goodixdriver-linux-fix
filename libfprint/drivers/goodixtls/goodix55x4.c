@@ -221,6 +221,7 @@ static void check_config_upload(FpDevice *dev, gboolean success,
     fpi_ssm_next_state(user_data);
   }
 }
+#if 0
 static void check_powerdown_scan_freq(FpDevice *dev, gboolean success,
                                       gpointer user_data, GError *error) {
   if (error) {
@@ -233,7 +234,9 @@ static void check_powerdown_scan_freq(FpDevice *dev, gboolean success,
     // goodix_send_mcu_get_pov_image(dev, check_mcu_pov_image, user_data);
   }
 }
+#endif
 
+#if 0
 static void check_mcu_pov_image(FpDevice *dev, gboolean success,
                                 gpointer user_data, GError *error) {
   if (error) {
@@ -246,6 +249,7 @@ static void check_mcu_pov_image(FpDevice *dev, gboolean success,
     fpi_ssm_next_state(user_data);
   }
 }
+#endif
 
 static void activate_run_state(FpiSsm *ssm, FpDevice *dev) {
 
@@ -378,7 +382,9 @@ static unsigned char get_pix(struct fpi_frame_asmbl_ctx *ctx,
 }
 
 // Bitdepth is 12, but we have to fit it in a byte
+#if 0
 static unsigned char squash(int v) { return v / 16; }
+#endif
 
 static void decode_frame(Goodix55X4Pix frame[GOODIX55X4_FRAME_SIZE],
                          const guint8 *raw_frame) {
@@ -400,10 +406,13 @@ static void decode_frame(Goodix55X4Pix frame[GOODIX55X4_FRAME_SIZE],
     }
   }
 }
+#if 0
 static int goodix_cmp_short(const void *a, const void *b) {
   return (int)(*(short *)a - *(short *)b);
 }
+#endif
 
+#if 0
 static void rotate_frame(Goodix55X4Pix frame[GOODIX55X4_FRAME_SIZE]) {
   Goodix55X4Pix buff[GOODIX55X4_FRAME_SIZE];
 
@@ -414,11 +423,14 @@ static void rotate_frame(Goodix55X4Pix frame[GOODIX55X4_FRAME_SIZE]) {
   }
   memcpy(frame, buff, GOODIX55X4_FRAME_SIZE);
 }
+#endif
+#if 0
 static void squash_frame(Goodix55X4Pix *frame, guint8 *squashed) {
   for (int i = 0; i != GOODIX55X4_FRAME_SIZE; ++i) {
     squashed[i] = squash(frame[i]);
   }
 }
+#endif
 /**
  * @brief Squashes the 12 bit pixels of a raw frame into the 4 bit pixels used
  * by libfprint.
@@ -548,6 +560,7 @@ static void scan_on_read_img(FpDevice *dev, guint8 *data, guint16 len,
   }
 }
 
+#if 0
 gboolean save_image_to_pgm2(guchar *data, const char *path) {
   FILE *fd = fopen(path, "w");
   size_t write_size = 7656;
@@ -573,6 +586,7 @@ gboolean save_image_to_pgm2(guchar *data, const char *path) {
 
   return TRUE;
 }
+#endif
 
 gboolean save_image_to_pgm(FpImage *img, const char *path) {
   FILE *fd = fopen(path, "w");
@@ -744,6 +758,7 @@ static void sleep_run_state(FpiSsm *ssm, FpDevice *dev) {
   }  
 }
 
+#if 0
 static void write_sensor_complete(FpDevice *dev, gpointer user_data,
                                   GError *error) {
   if (error) {
@@ -752,6 +767,7 @@ static void write_sensor_complete(FpDevice *dev, gpointer user_data,
   }
   scan_get_img(dev, user_data);
 }
+#endif
 
 static void scan_complete(FpiSsm *ssm, FpDevice *dev, GError *error) {
   if (error) {
@@ -826,6 +842,15 @@ static void dev_change_state(FpImageDevice *img_dev,
       scan_start(self);
       break;
     }
+    case FPI_IMAGE_DEVICE_STATE_INACTIVE:
+    case FPI_IMAGE_DEVICE_STATE_ACTIVATING:
+    case FPI_IMAGE_DEVICE_STATE_DEACTIVATING:
+    case FPI_IMAGE_DEVICE_STATE_IDLE:
+    case FPI_IMAGE_DEVICE_STATE_CAPTURE:
+    case FPI_IMAGE_DEVICE_STATE_AWAIT_FINGER_OFF:
+    default:
+        break;
+
   }
 }
 
@@ -843,6 +868,7 @@ static void fpi_device_goodixtls55x4_init(FpiDeviceGoodixTls55X4 *self) {
 
 static void
 fpi_device_goodixtls55x4_class_init(FpiDeviceGoodixTls55X4Class *class) {
+  fprintf(stderr, "DEBUG: fpi_device_goodixtls55x4_class_init called\n");
   FpiDeviceGoodixTlsClass *gx_class = FPI_DEVICE_GOODIXTLS_CLASS(class);
   FpDeviceClass *dev_class = FP_DEVICE_CLASS(class);
   FpImageDeviceClass *img_dev_class = FP_IMAGE_DEVICE_CLASS(class);
@@ -872,3 +898,5 @@ fpi_device_goodixtls55x4_class_init(FpiDeviceGoodixTls55X4Class *class) {
 
   fpi_device_class_auto_initialize_features(dev_class);
 }
+/* Manual bridge to satisfy the linker */
+

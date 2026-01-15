@@ -273,6 +273,9 @@ foreach driver: drivers
     if driver == 'goodixtls55x4'
     drivers_sources += ['drivers/goodixtls/goodix_proto.c', 'drivers/goodixtls/goodix.c', 'drivers/goodixtls/goodix55x4.c', 'drivers/goodixtls/goodixtls.c']
     endif
+    if driver == 'goodixtls'
+    drivers_sources += ['drivers/goodixtls/goodix_proto.c', 'drivers/goodixtls/goodix.c', 'drivers/goodixtls/goodix55x4.c', 'drivers/goodixtls/goodix511.c', 'drivers/goodixtls/goodixtls.c']
+    endif
 endforeach
 
 
@@ -306,6 +309,17 @@ drivers_type_func += '  GArray *drivers = g_array_new (TRUE, FALSE, sizeof (GTyp
 drivers_type_func += '  GType t;'
 drivers_type_func += ''
 foreach driver: supported_drivers
+    if driver == 'goodixtls'
+        drivers_type_list += 'extern GType (fpi_device_goodixtls55x4_get_type) (void);'
+        drivers_type_func += '  t = fpi_device_goodixtls55x4_get_type ();'
+        drivers_type_func += '  g_array_append_val (drivers, t);'
+
+        drivers_type_list += 'extern GType (fpi_device_goodixtls511_get_type) (void);'
+        drivers_type_func += '  t = fpi_device_goodixtls511_get_type ();'
+        drivers_type_func += '  g_array_append_val (drivers, t);'
+        continue
+    endif
+
     drivers_type_list += 'extern GType (fpi_device_' + driver + '_get_type) (void);'
     drivers_type_func += '  t = fpi_device_' + driver + '_get_type ();'
     drivers_type_func += '  g_array_append_val (drivers, t);'

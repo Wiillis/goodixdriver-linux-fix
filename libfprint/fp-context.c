@@ -228,6 +228,12 @@ usb_device_added_cb (FpContext *self, GUsbDevice *device, GUsbContext *usb_ctx)
       if (cls->type != FP_DEVICE_TYPE_USB)
         continue;
 
+      fprintf(stderr, "DEBUG: Checking driver %s\n", g_type_name (driver));
+      if (cls->id_table == NULL) {
+          fprintf(stderr, "DEBUG: Driver %s has NULL id_table!\n", g_type_name (driver));
+          continue;
+      }
+
       for (entry = cls->id_table; entry->pid; entry++)
         {
           gint driver_score = 50;
@@ -369,6 +375,7 @@ fp_context_init (FpContext *self)
       for (i = 0; i < priv->drivers->len;)
         {
           GType driver = g_array_index (priv->drivers, GType, i);
+          fprintf(stderr, "DEBUG: fp_context_init: checking driver type %lu (%s)\n", driver, g_type_name(driver));
           g_autoptr(FpDeviceClass) cls = g_type_class_ref (driver);
 
           if (!is_driver_allowed (cls->id))
@@ -450,6 +457,12 @@ fp_context_enumerate (FpContext *context)
 
       if (cls->type != FP_DEVICE_TYPE_VIRTUAL)
         continue;
+
+      if (cls->id_table == NULL)
+        {
+          g_warning ("Driver %s has no id_table", g_type_name (driver));
+          continue;
+        }
 
       for (entry = cls->id_table; entry->pid; entry++)
         {

@@ -262,7 +262,7 @@ enum otp_write_states {
 static guint16 otp_write_addrs[] = {0x0220, 0x0236, 0x0238, 0x023a};
 
 static void otp_write_run(FpiSsm *ssm, FpDevice *dev) {
-  guint16 data;
+  guint16 data = 0;
   FpiDeviceGoodixTls511 *self = FPI_DEVICE_GOODIXTLS511(dev);
   guint8 *otp = self->otp;
 
@@ -666,6 +666,7 @@ static void fpi_device_goodixtls511_init(FpiDeviceGoodixTls511 *self) {
 
 static void
 fpi_device_goodixtls511_class_init(FpiDeviceGoodixTls511Class *class) {
+  fprintf(stderr, "DEBUG: fpi_device_goodixtls511_class_init called\n");
   FpiDeviceGoodixTlsClass *gx_class = FPI_DEVICE_GOODIXTLS_CLASS(class);
   FpDeviceClass *dev_class = FP_DEVICE_CLASS(class);
   FpImageDeviceClass *img_dev_class = FP_IMAGE_DEVICE_CLASS(class);

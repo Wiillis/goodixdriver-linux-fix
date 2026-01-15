@@ -212,7 +212,7 @@ goodix_receive_preset_psk_read (FpDevice *dev, guint8 *data, guint16 length,
       GUINT32_FROM_LE(resp_data->length);
 
   if (length - 9 != psk_len ) {
-    g_print("Preset Crap failed len: %d, psk_len: %d\n", length, psk_len + sizeof(guint8) + sizeof(GoodixPresetPsk));
+    g_print("Preset Crap failed len: %d, psk_len: %d\n", length, (int)(psk_len + sizeof(guint8) + sizeof(GoodixPresetPsk)));
     g_set_error(&error, G_IO_ERROR, G_IO_ERROR_INVALID_DATA,
                 "Invalid preset PSK read reply length: %d", length);
     callback(dev, FALSE, 0x00000000, NULL, 0, cb_info->user_data, error);
@@ -913,7 +913,7 @@ goodix_send_write_sensor_register (FpDevice *dev, guint16 address,
 
   GoodixWriteSensorRegister payload = {.multiples = FALSE,
                                        .address = 556,
-                                       .value = {0x05, 0x03}};
+                                       .value = 0x0305};
   //guint16 payload[] = {0x00, 0x022c, 0x05, 0x03};
   GoodixCallbackInfo *cb_info;
 
@@ -1643,3 +1643,7 @@ static void
 fpi_device_goodixtls_class_init (FpiDeviceGoodixTlsClass *class)
 {
 }
+#include "goodix.h"
+
+/* Final Linker Bridge */
+
